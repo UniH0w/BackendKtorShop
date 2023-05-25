@@ -3,6 +3,8 @@ package com.example.routes
 import com.example.data.model.Product
 import com.example.data.model.SimpleResponse
 import com.example.data.model.User
+import com.example.data.table.ProductTable
+import com.example.data.table.UserTable
 import com.example.repository.Repo
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -15,6 +17,7 @@ import io.ktor.routing.*
 const val PRODUCT = "$API_VERSION/products"
 const val CREATE_PRODUCT = "$PRODUCT/create"
 const val DELETE_PRODUCT = "$PRODUCT/delete"
+const val GET_ID_PRODUCT = "$PRODUCT/id"
 
 @Location(CREATE_PRODUCT)
 class ProductCreateRoute
@@ -24,6 +27,9 @@ class ProductDeleteRoute
 
 @Location(PRODUCT)
 class ProductGetRoute
+
+@Location(GET_ID_PRODUCT)
+class ProductGetIdRoute
 
 fun Route.ProductRoutes(
     db:Repo,
@@ -41,8 +47,7 @@ fun Route.ProductRoutes(
             }
 
             try {
-                val email = call.principal<User>()!!.email
-                db.addProduct(product,email)
+                db.addProduct(product)
                 call.respond(HttpStatusCode.OK,SimpleResponse(true,"Product Added"))
             }catch (e:Exception){
                 call.respond(HttpStatusCode.Conflict,SimpleResponse(false, e.message?:"Some Problem"))
@@ -50,15 +55,38 @@ fun Route.ProductRoutes(
         }
 
         get<ProductGetRoute> {
-
+            val manufacturer = try {
+                call.request.queryParameters["manufacturer"]!!
+            }catch (e:Exception){
+                call.respond(HttpStatusCode.BadRequest,SimpleResponse(false,"QueryParameter:id is not present"))
+                return@get
+            }
             try {
-                val email = call.principal<User>()!!.email
-                val product = db.getAllProduct(email)
+                val product = db.getAllProduct(manufacturer)
                 call.respond(HttpStatusCode.OK,product)
             }catch (e:Exception){
                 call.respond(HttpStatusCode.Conflict, emptyList<Product>())
             }
         }
+
+        get<ProductGetIdRoute>  {
+            val productId = try {
+                call.request.queryParameters["id"]!!
+            } catch (e:Exception){
+                call.respond(HttpStatusCode.BadRequest,SimpleResponse(false,"QueryParameter:id is not present"))
+                return@get
+            }
+
+            try {
+
+                val product = db.getIdProduct(productId)
+                call.respond(HttpStatusCode.OK,product)
+            } catch (e:Exception){
+                call.respond(HttpStatusCode.Conflict,SimpleResponse(false, e.message ?: "Some problem Occurred!"))
+            }
+
+        }
+
 
         delete<ProductDeleteRoute> {
 
@@ -68,18 +96,13 @@ fun Route.ProductRoutes(
                 call.respond(HttpStatusCode.BadRequest,SimpleResponse(false,"QueryParameter:id is not present"))
                 return@delete
             }
-
-
             try {
-
-                val email = call.principal<User>()!!.email
-                db.deleteProduct(productId,email)
+                db.deleteProduct(productId)
                 call.respond(HttpStatusCode.OK,SimpleResponse(true,"Note Deleted Successfully!"))
 
             } catch (e:Exception){
                 call.respond(HttpStatusCode.Conflict,SimpleResponse(false, e.message ?: "Some problem Occurred!"))
             }
-
         }
     }
 }
