@@ -9,6 +9,9 @@ object ProductTable: Table(){
     val model = text("model")
     val description =text("description")
     val price = text("price")
+    val image = text("image")
+    val cartid = text("cartid")
+    val favoriteid = text("favoriteid")
 
     override val  primaryKey: PrimaryKey = PrimaryKey(id)
 
