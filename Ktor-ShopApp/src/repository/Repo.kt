@@ -78,18 +78,6 @@ class Repo() {
         }
     }
 
-    /*suspend fun addUser(user:User){
-        dbQuery{
-            UserTable.insert { ut->
-                ut[UserTable.email] = user.email
-                ut[UserTable.password] = user.password
-                ut[UserTable.firstName] = user.firstName
-                ut[UserTable.lastName] = user.lastName
-                ut[UserTable.phoneNumber] = user.phoneNumber
-            }
-        }
-    }*/
-
 
     // ==============Product===================//
 
@@ -153,6 +141,15 @@ class Repo() {
             }
         }
     }
+
+    suspend fun removeBasketAllProduct(product: Product){
+        dbQuery {
+            ProductTable.update { ut ->
+                ut[ProductTable.cartid] = product.cartid
+            }
+        }
+    }
+
     //Избраное
     suspend fun addFavoriteProduct(product: Product, id: String){
         dbQuery {
@@ -180,28 +177,6 @@ class Repo() {
         }
     }
 
-    /*
-    private fun rowToBasketProduct(row: ResultRow) = Cart(
-        id = row[id],
-        userEmail = row[CartTable.userEmail]
-    )*/
-
-
-/*suspend fun  addProduct(product: Product){
-     dbQuery {
-         ProductTable.insert { pd ->
-             pd[ProductTable.id] = product.id
-             pd[ProductTable.manufacturer] = product.manufacturer
-             pd[ProductTable.description] = product.description
-             pd[ProductTable.price] = product.price
-             pd[ProductTable.model] = product.model
-             pd[ProductTable.image] = product.image
-         }
-
-
-     }
- }
-}*/
     private fun rowToProduct(row: ResultRow) = Product(
             id = row[id],
             manufacturer = row[manufacturer],

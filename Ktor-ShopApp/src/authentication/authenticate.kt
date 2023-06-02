@@ -1,7 +1,7 @@
 package com.example.authentication
 
 
-import io.ktor.auth.*
+
 import io.ktor.util.*
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec

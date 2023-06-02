@@ -28,14 +28,11 @@ fun Application.module(testing: Boolean = false) {
     val  db = Repo()
     val jwtService = JwtService()
     val  hashFunction  = {s:String -> hash(s)}
-
-
     install(Sessions) {
         cookie<MySession>("MY_SESSION") {
             cookie.extensions["SameSite"] = "lax"
         }
     }
-
     install(Authentication) {
 
         jwt("jwt") {
@@ -52,44 +49,19 @@ fun Application.module(testing: Boolean = false) {
         }
 
     }
-
     install(Locations)
-
-
     install(ContentNegotiation) {
         gson {
         }
     }
-
     routing {
         get("/") {
             call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
         }
-
-
         UserRoutes(db,jwtService,hashFunction)
         ProductRoutes(db, hashFunction)
 
-        route("/products"){
-
-            route("/create") {
-                // localhost:8081/notes/create
-                post {
-                    val body = call.receive<String>()
-                    call.respond(body)
-                }
-            }
-        }
-
-            delete{
-                val body = call.receive<String>()
-                call.respond(body)
-            }
-
-
-
     }
 }
-
 data class MySession(val count: Int = 0)
 

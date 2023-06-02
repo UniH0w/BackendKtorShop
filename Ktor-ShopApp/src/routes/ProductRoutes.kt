@@ -20,14 +20,16 @@ const val REMOVE_BASKET_PRODUCT ="$PRODUCT/basket/remove"
 const val POST_FAVORITE_PRODUCT = "$PRODUCT/create/favorite"
 const val GET_FAVORITE_PRODUCT = "$PRODUCT/favorite"
 const val REMOVE_FAVORITE_PRODUCT ="$PRODUCT/remove/favorite"
+const val REMOVE_BASKET_PRODUCT_All = "$PRODUCT/remove/favorite/all"
 
+@Location(REMOVE_BASKET_PRODUCT_All)
+class ProductRemoveAllBasket
 @Location(POST_FAVORITE_PRODUCT)
 class ProductCreateFavorite
 @Location(GET_FAVORITE_PRODUCT)
 class ProductGetFavorite
 @Location(REMOVE_FAVORITE_PRODUCT)
 class ProductRemoveFavorite
-
 @Location(CREATE_PRODUCT)
 class ProductCreateRoute
 @Location(POST_BASKET_PRODUCT)
@@ -36,7 +38,6 @@ class ProductCreateBasket
 class ProductGetBasket
 @Location(REMOVE_BASKET_PRODUCT)
 class ProductRemoveBasket
-
 @Location(DELETE_PRODUCT)
 class ProductDeleteRoute
 
@@ -104,6 +105,17 @@ fun Route.ProductRoutes(
                 val cart = "0"
                 val product = Product("", "", "", "", "", "", cart,"")
                 db.removeBasketProduct(product, cartId)
+                call.respond(HttpStatusCode.OK, SimpleResponse(true, "User Updated Successfully!"))
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.Conflict, SimpleResponse(false, e.message ?: "Some Problem Occurred!"))
+            }
+        }
+
+        post<ProductRemoveAllBasket> {
+            try {
+                val cart = "0"
+                val product = Product("", "", "", "", "", "", cart,"")
+                db.removeBasketAllProduct(product)
                 call.respond(HttpStatusCode.OK, SimpleResponse(true, "User Updated Successfully!"))
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.Conflict, SimpleResponse(false, e.message ?: "Some Problem Occurred!"))

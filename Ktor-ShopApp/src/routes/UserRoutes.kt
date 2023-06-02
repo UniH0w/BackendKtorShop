@@ -22,7 +22,6 @@ const val UPDATE_USER = "$USERS/update"
 
 @Location(REGISTER_REQUEST)
 class UserRegisterRoute
-
 @Location(LOGIN_REQUEST)
 class UserLoginRoute
 @Location(UPDATE_PASSWORD)
@@ -110,7 +109,6 @@ fun Route.UserRoutes(
                 return@post
             }
             try {
-
                 val email = call.principal<User>()!!.email
                 val user =  User(userUpdate.email, "", userUpdate.firstName,userUpdate.lastName,userUpdate.phoneNumber)
                 db.updateUser(user, email)
