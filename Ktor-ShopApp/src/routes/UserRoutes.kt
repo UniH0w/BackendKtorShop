@@ -70,7 +70,7 @@ fun Route.UserRoutes(
                 if (user.password == hashFunction(loginRequest.password)) {
                     call.respond(
                         HttpStatusCode.OK,
-                        UserService(user.firstName, user.lastName, user.email, token = jwtService.generateToken(user))
+                        UserService(user.firstName, user.lastName, user.email, user.phoneNumber, token = jwtService.generateToken(user))
                     )
 
 

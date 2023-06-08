@@ -4,6 +4,7 @@ import com.example.authentication.JwtService
 import com.example.authentication.hash
 import com.example.repository.DatabaseFactory
 import com.example.repository.Repo
+import com.example.routes.OrderRoutes
 import com.example.routes.ProductRoutes
 import com.example.routes.UserRoutes
 import io.ktor.application.*
@@ -60,6 +61,7 @@ fun Application.module(testing: Boolean = false) {
         }
         UserRoutes(db,jwtService,hashFunction)
         ProductRoutes(db, hashFunction)
+        OrderRoutes(db,hashFunction)
 
     }
 }
